@@ -57,6 +57,9 @@ A naive benchmark on a 16 Mpbs bandwidth gives us
                cl-prevalence
                cl-qrencode
                cl-tld
+               cl-xmpp
+               cl-xmpp-tls
+               cl-xmpp-sasl
                closer-mop
                cl-containers
                moptilities
@@ -215,6 +218,7 @@ A naive benchmark on a 16 Mpbs bandwidth gives us
                 :components
                 ((:file "repl")
                  (:file "small-web")
+                 (:file "xmpp")
                  (:file "reading-line")
                  (:file "no-image")
                  (:file "no-sound")
