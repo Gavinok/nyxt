@@ -19,15 +19,15 @@
 (define-class recent-buffer-source (prompter:source)
   ((prompter:name "Deleted buffers")
    (prompter:multi-selection-p t)
-   (prompter:constructor
-    (containers:container->list (recent-buffers *browser*)))
-   (prompter:actions (list
-                      (lambda-command reopen-dead-buffer-focus (buffer-list)
-                        "Reopen BUFFER and switch to it."
-                        (mapc #'reopen-dead-buffer buffer-list)
-                        (set-current-buffer (or (first (prompter:marks (current-source)))
-                                                (current-suggestion-value (current-prompt-buffer)))))
-                      (lambda-mapped-command reopen-dead-buffer)))))
+   (prompter:constructor (containers:container->list (recent-buffers *browser*)))
+   (prompter:return-actions
+    (list
+     (lambda-command reopen-dead-buffer-focus (buffer-list)
+       "Reopen BUFFER and switch to it."
+       (mapc #'reopen-dead-buffer buffer-list)
+       (set-current-buffer (or (first (prompter:marks (current-source)))
+                               (current-suggestion-value (current-prompt-buffer)))))
+     (lambda-mapped-command reopen-dead-buffer)))))
 
 (define-command reopen-buffer ()
   "Reopen queried deleted buffer(s)."

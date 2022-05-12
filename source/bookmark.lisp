@@ -178,7 +178,7 @@ In particular, we ignore the protocol (e.g. HTTP or HTTPS does not matter)."
    :prompt "Bookmark URL from buffer(s)"
    :sources (make-instance 'buffer-source
                            :multi-selection-p t
-                           :actions (list (lambda-mapped-command bookmark-current-url)))))
+                           :return-actions (list (lambda-mapped-command bookmark-current-url)))))
 
 (define-command bookmark-url (&key url)
   "Prompt for a URL to bookmark."
@@ -240,7 +240,7 @@ rest in background buffers."
   (prompt
    :prompt "Open bookmark(s)"
    :sources (make-instance 'bookmark-source
-                           :actions actions)))
+                           :return-actions actions)))
 
 (defmethod serialize-object ((entry bookmark-entry) stream)
   (unless (url-empty-p (url entry))

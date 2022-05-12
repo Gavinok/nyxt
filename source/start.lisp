@@ -286,12 +286,11 @@ Return the short error message and the full error message as second value."
                  (uiop:pathname-directory-pathname init-path)
                  (uiop:getcwd))))
    :extra-modes '(nyxt/file-manager-mode:file-manager-mode)
-   :sources
-   (make-instance 'nyxt/file-manager-mode:file-source
-                  :extensions '("lisp")
-                  :actions (list (lambda-command load-file* (files)
-                                   (dolist (file files)
-                                     (load-lisp file)))))))
+   :sources (make-instance 'nyxt/file-manager-mode:file-source
+                           :extensions '("lisp")
+                           :return-actions (list (lambda-command load-file* (files)
+                                                   (dolist (file files)
+                                                     (load-lisp file)))))))
 
 (define-command clean-configuration ()
   "Clean all the user configuration created with `define-configuration' or `customize-instance'."

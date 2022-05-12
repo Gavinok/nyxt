@@ -110,7 +110,7 @@
 
 (define-class hint-source (prompter:source)
   ((prompter:name "Hints")
-   (prompter:follow-p t)
+   (prompter:auto-selection-action-p t)
    (prompter:filter-postprocessor
     (lambda (suggestions source input)
       (declare (ignore source))
@@ -121,26 +121,27 @@
            suggestions
            :key #'prompter:value)
         (append matching-hints other-hints))))
-   (prompter:follow-mode-functions
+   (prompter:selection-actions
     (lambda (suggestion)
       (highlight-selected-hint :element suggestion
                                :scroll nil)))
-   (prompter:actions (list 'identity
-                           (lambda-command click* (elements)
-                             (dolist (element (rest elements))
-                               (nyxt/dom:click-element :nyxt-identifier (get-nyxt-id element)))
-                             (nyxt/dom:click-element :nyxt-identifier (get-nyxt-id (first elements)))
-                             nil)
-                           (lambda-command focus* (elements)
-                             (dolist (element (rest elements))
-                               (nyxt/dom:focus-select-element :nyxt-identifier (get-nyxt-id element)))
-                             (nyxt/dom:focus-select-element :nyxt-identifier (get-nyxt-id (first elements)))
-                             nil)
-                           (lambda-command hover* (elements)
-                             (dolist (element (rest elements))
-                               (nyxt/dom:hover-element :nyxt-identifier (get-nyxt-id element)))
-                             (nyxt/dom:hover-element :nyxt-identifier (get-nyxt-id (first elements)))
-                             nil)))))
+   (prompter:return-actions
+    (list 'identity
+          (lambda-command click* (elements)
+            (dolist (element (rest elements))
+              (nyxt/dom:click-element :nyxt-identifier (get-nyxt-id element)))
+            (nyxt/dom:click-element :nyxt-identifier (get-nyxt-id (first elements)))
+            nil)
+          (lambda-command focus* (elements)
+            (dolist (element (rest elements))
+              (nyxt/dom:focus-select-element :nyxt-identifier (get-nyxt-id element)))
+            (nyxt/dom:focus-select-element :nyxt-identifier (get-nyxt-id (first elements)))
+            nil)
+          (lambda-command hover* (elements)
+            (dolist (element (rest elements))
+              (nyxt/dom:hover-element :nyxt-identifier (get-nyxt-id element)))
+            (nyxt/dom:hover-element :nyxt-identifier (get-nyxt-id (first elements)))
+            nil)))))
 
 (serapeum:export-always 'query-hints)
 (defun query-hints (prompt function
@@ -159,7 +160,7 @@ FUNCTION is the action to perform on the selected elements."
                             ;; TODO: No need to find the symbol if we move this code (and
                             ;; the rest) to the element-hint-mode package.
                             :extra-modes (list (resolve-symbol :element-hint-mode :mode))
-                            :auto-return-p (auto-follow-hints-p (find-submode 'web-mode))
+                            :auto-return-p (auto-return-hints-p (find-submode 'web-mode))
                             :history nil
                             :sources
                             (make-instance

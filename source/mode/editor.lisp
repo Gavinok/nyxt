@@ -67,7 +67,7 @@ get/set-content (which is necessary for operation)."
                 :sources
                 (list (make-instance 'nyxt/file-manager-mode:file-source
                                      :name "Absolute file path"
-                                     :actions '(identity))
+                                     :return-actions '(identity))
                       (make-instance 'prompter:raw-source
                                      :name "New file")))))
     (open-file-with-editor buffer file)

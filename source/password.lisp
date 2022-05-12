@@ -42,7 +42,7 @@ for which the `executable' slot is non-nil."
    (prompter:constructor
     (lambda (source)
       (password:list-passwords (password-instance source))))
-   (prompter:actions password-source-actions)))
+   (prompter:return-actions password-source-actions)))
 
 (defun password-debug-info ()
   (alex:when-let ((interface (password-interface (current-buffer))))
@@ -145,10 +145,10 @@ for which the `executable' slot is non-nil."
         (prompt
          :prompt "Username"
          :input (quri:uri-domain (url buffer))
-         :sources (list (make-instance 'password-source
-                                       :buffer buffer
-                                       :password-instance (password-interface buffer)
-                                       :actions (sera:filter (sera:eqs 'clip-username)
-                                                             password-source-actions
-                                                             :key #'name)))))
+         :sources (make-instance 'password-source
+                                 :buffer buffer
+                                 :password-instance (password-interface buffer)
+                                 :return-actions (sera:filter (sera:eqs 'clip-username)
+                                                              password-source-actions
+                                                              :key #'name))))
       (echo-warning "No password manager found.")))

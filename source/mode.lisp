@@ -343,7 +343,7 @@ ARGS are passed to the mode `enable' method."
                        :prompt "Enable mode(s) for buffer(s)"
                        :sources (make-instance 'buffer-source
                                                :multi-selection-p t
-                                               :actions '()))))
+                                               :return-actions '()))))
          (modes (if modes
                     (uiop:ensure-list modes)
                     (prompt
@@ -369,7 +369,7 @@ BUFFERS and MODES are automatically coerced into a list."
                        :prompt "Enable mode(s) for buffer(s)"
                        :sources (make-instance 'buffer-source
                                                :multi-selection-p t
-                                               :actions '()))))
+                                               :return-actions '()))))
          (modes (if modes
                     (uiop:ensure-list modes)
                     (prompt
@@ -383,17 +383,19 @@ BUFFERS and MODES are automatically coerced into a list."
 
 (define-command toggle-modes (&key (buffer (current-buffer)))
   "Enable marked modes, disable unmarked modes for BUFFER."
-  (let* ((modes-to-enable (prompt
-                           :prompt "Mark modes to enable, unmark to disable"
-                           :sources (make-instance 'mode-source
-                                                   :actions (list 'identity
-                                                                  (lambda-command force-disable-auto-mode (modes)
-                                                                                "Return selection but force disabling auto-mode.
+  (let* ((modes-to-enable
+           (prompt
+            :prompt "Mark modes to enable, unmark to disable"
+            :sources (make-instance
+                      'mode-source
+                      :return-actions (list 'identity
+                                            (lambda-command force-disable-auto-mode (modes)
+                                              "Return selection but force disabling auto-mode.
 This is convenient when you use auto-mode by default and you want to toggle a
 mode permanently for this buffer."
-                                                                                (delete (read-from-string "nyxt/auto-mode:auto-mode" )
-                                                                                        modes)))
-                                                   :marks (mapcar #'sera:class-name-of (modes buffer)))))
+                                              (delete (read-from-string "nyxt/auto-mode:auto-mode" )
+                                                      modes)))
+                      :marks (mapcar #'sera:class-name-of (modes buffer)))))
          (modes-to-disable (set-difference (all-mode-symbols) modes-to-enable
                                            :test #'string=)))
     (disable-modes (uiop:ensure-list modes-to-disable) buffer)

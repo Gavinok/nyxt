@@ -168,15 +168,14 @@
   "Select a frame and open the links in new buffers."
   (prompt
    :prompt "Open selected links in new buffers:"
-   :sources (list (make-instance 'frame-source
-                                 :buffer buffer
-                                 :multi-selection-p t
-                                 :actions (list (lambda-command open-new-buffers (urls)
-                                                              (mapcar (lambda (i) (make-buffer :url (quri:uri i))) urls)))))
-   :after-destructor
-   (lambda ()
-     (with-current-buffer buffer
-       (frame-element-clear)))))
+   :sources (make-instance
+             'frame-source
+             :buffer buffer
+             :multi-selection-p t
+             :return-actions (list (lambda-command open-new-buffers (urls)
+                                     (mapcar (lambda (i) (make-buffer :url (quri:uri i)))
+                                             urls))))
+   :after-destructor (lambda () (with-current-buffer buffer (frame-element-clear)))))
 
 (defun frame-source-selection ()
   (remove-duplicates (mapcar #'url (frame-element-get-selection))

@@ -35,7 +35,7 @@ search.")
     nil
     :type boolean
     :documentation "Whether history navigation is restricted by buffer-local history.")
-   (auto-follow-hints-p
+   (auto-return-hints-p
     nil
     :type boolean
     :documentation "Whether the hints are automatically followed when matching user input.")
@@ -552,7 +552,7 @@ Otherwise go forward to the only child."
    (prompter:constructor
     (lambda (source)
       (containers:container->list (ring source))))
-   (prompter:actions
+   (prompter:return-actions
     (list (lambda-command paste* (ring-items)
             (%paste :input-text (first ring-items))))))
   (:export-class-name-p t)
@@ -596,7 +596,7 @@ Otherwise go forward to the only child."
 (define-class autofill-source (prompter:source)
   ((prompter:name "Autofills")
    (prompter:constructor (autofills *browser*))
-   (prompter:actions
+   (prompter:return-actions
     (list (lambda-command autofill* (autofills)
             (let ((selected-fill (first autofills)))
               (cond ((stringp (autofill-fill selected-fill))

@@ -117,7 +117,7 @@
   (prompt
    :prompt "Write input data from:"
    :sources (make-instance 'input-data-source
-                           :actions actions)))
+                           :return-actions actions)))
 
 (define-command set-input-data-from-saved-domain
     (&key (actions (list (lambda-command buffer-load* (suggestion-values)
@@ -128,7 +128,7 @@ the current buffer."
   (prompt
    :prompt "Write input data from:"
    :sources (make-instance 'filtered-domain-input-data-source
-                           :actions actions)))
+                           :return-actions actions)))
 
 (defun input-fields ()
   "List all input entries objects saved in the local file."

@@ -136,7 +136,7 @@
    (buffer (current-buffer))
    (minimum-search-length 3)
    (prompter:name "Search buffer")
-   (prompter:follow-p t)
+   (prompter:auto-selection-action-p t)
    (prompter:filter nil)
    (prompter:filter-preprocessor
     (lambda (preprocessed-suggestions source input)
@@ -153,10 +153,10 @@
           (progn
             (remove-search-hints)
             '()))))
-   (prompter:follow-mode-functions (lambda (suggestion)
-                                     ;; TODO: rewrite prompt-buffer-selection-highlight-hint
-                                     (set-current-buffer (buffer suggestion) :focus nil)
-                                     (prompt-buffer-selection-highlight-hint :scroll t)))
+   (prompter:selection-actions (lambda (suggestion)
+                                 ;; TODO: rewrite prompt-buffer-selection-highlight-hint
+                                 (set-current-buffer (buffer suggestion) :focus nil)
+                                 (prompt-buffer-selection-highlight-hint :scroll t)))
    (prompter:destructor (lambda (prompter source)
                           (declare (ignore prompter source))
                           (unless (keep-search-hints-p (current-buffer))
@@ -187,7 +187,7 @@ Example:
    :sources (list
              (make-instance 'search-buffer-source
                             :case-sensitive-p case-sensitive-p
-                            :actions (list (lambda (search-match)
+                            :return-actions (list (lambda (search-match)
                                              (unless (keep-search-hints-p (current-buffer))
                                                (remove-search-hints))
                                              search-match))))))
@@ -196,9 +196,9 @@ Example:
   "Search multiple buffers."
   (let ((buffers (prompt
                   :prompt "Search buffer(s)"
-                  :sources (list (make-instance 'buffer-source ; TODO: Define class?
-                                                :actions '()
-                                                :multi-selection-p t)))))
+                  :sources (make-instance 'buffer-source ; TODO: Define class?
+                                          :return-actions '()
+                                          :multi-selection-p t))))
     (prompt
      :prompt "Search text"
      :sources (mapcar (lambda (buffer)

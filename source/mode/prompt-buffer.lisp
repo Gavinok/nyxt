@@ -39,11 +39,11 @@ Actions can be listed and run with `return-selection-over-action' (bound to
        "tab" 'insert-selection
        "return" 'return-selection
        "M-return" 'return-selection-over-action
-       "C-return" 'run-follow-mode-function
+       "C-return" 'run-selection-action
        "f1 b" 'run-prompt-buffer-command
        "f1 m" 'describe-prompt-buffer
-       "C-c C-f" 'toggle-follow ; TODO: This is the Emacs Helm binding.  Better?
-       "C-]" 'toggle-attributes-display ; TODO: This is the Emacs Helm binding.  Better?
+       "C-c C-f" 'toggle-auto-selection-action ; TODO: Emacs Helm binding.  Better?
+       "C-]" 'toggle-attributes-display        ; TODO: Emacs Helm binding.  Better?
        "C-space" 'toggle-mark
        "shift-space" 'toggle-mark-backwards
        "M-shift-space" 'toggle-mark-backwards
@@ -70,7 +70,7 @@ Actions can be listed and run with `return-selection-over-action' (bound to
        "C-M-p" 'scroll-other-buffer-up
        "C-M-v" 'scroll-page-down-other-buffer
        "shift-C-M-v" 'scroll-page-up-other-buffer
-       "C-j" 'run-follow-mode-function
+       "C-j" 'run-selection-action
        "C-g" 'cancel-input
        "C-h b" 'run-prompt-buffer-command
        "C-e" 'move-end-of-input
@@ -102,7 +102,7 @@ Actions can be listed and run with `return-selection-over-action' (bound to
        ;; Same as with C-j.
        "C-J" 'select-next-source
        "C-K" 'select-previous-source
-       "z f" 'toggle-follow
+       "z f" 'toggle-auto-selection-action
        "z a" 'toggle-attributes-display
        "y" 'copy-selection
        "p" 'paste
@@ -241,7 +241,7 @@ If STEPS is negative, go to next pages instead."
   ((prompter:name "List of prompter attributes")
    (prompter:multi-selection-p t)
    (prompter:suggestion-maker 'make-attribute-suggestion)
-   (prompter:actions '(return-marks-only))))
+   (prompter:return-actions '(return-marks-only))))
 
 (defun return-marks-only (suggestion-values)
   "Return marked suggestions only.
@@ -297,7 +297,7 @@ current unmarked selection."
 
 (defun prompt-buffer-actions (&optional (window (current-window)))
   (sera:and-let* ((first-prompt-buffer (first (nyxt::active-prompt-buffers window))))
-    (prompter:actions first-prompt-buffer)))
+    (prompter:return-actions first-prompt-buffer)))
 
 ;; TODO: Should actions be commands?  For now, they can be either commands or symbols.
 (defun make-action-suggestion (action &optional source input)
@@ -329,17 +329,17 @@ current unmarked selection."
     (when action
       (prompter:return-selection prompt-buffer action))))
 
-(define-command-prompt run-follow-mode-function (prompt-buffer)
-  "Run follow-mode function over selected suggestion without closing PROMPT-BUFFER."
-  (prompter:call-follow-mode-function prompt-buffer))
+(define-command-prompt run-selection-action (prompt-buffer)
+  "Run selection actions over selected suggestion without closing PROMPT-BUFFER."
+  (prompter:call-selection-action prompt-buffer))
 
 (define-command-prompt cancel-input (prompt-buffer) ; TODO: Rename.
   "Close the prompt-buffer without further action."
   (prompter:destroy prompt-buffer))
 
-(define-command-prompt toggle-follow (prompt-buffer)
+(define-command-prompt toggle-auto-selection-action (prompt-buffer)
   "Close the prompt-buffer without further action."
-  (prompter:toggle-follow prompt-buffer))
+  (prompter:toggle-auto-selection-action prompt-buffer))
 
 (define-command-prompt toggle-mark (prompt-buffer &key (direction :forward))
   "Mark selection.
